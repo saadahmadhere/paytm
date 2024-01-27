@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../config.js';
 import { User } from '../db.js';
 import { z } from 'zod';
+import { authMiddleware } from '../middleware.js';
 
 const signUpSchema = z.object({
 	email: z.string().email(),
@@ -17,20 +18,26 @@ const loginSchema = z.object({
 	password: z.string(),
 });
 
+const updateBodySchema = z.object({
+	email: z.string().email().optional(),
+	firstName: z.string().min(1).max(255).optional(),
+	lastName: z.string().min(1).max(255).optional(),
+});
+
 const router = express.Router();
 
 router.post('/signup', (req, res) => {
 	const { email, firstName, lastName, password } = req.body;
 
-	const signUpSchema = signUpSchema.safeParse({
+	const isSignedUp = signUpSchema.safeParse({
 		email,
 		firstName,
 		lastName,
 		password,
 	});
 
-	if (signUpSchema.error) {
-		res.status(411).json(signUpSchema.error);
+	if (isSignedUp.error) {
+		res.status(411).json(isSignedUp.error);
 		return;
 	}
 
@@ -72,6 +79,21 @@ router.post('/login', async (req, res) => {
 	const token = jwt.sign({ userId: user._id }, JWT_SECRET);
 
 	res.status(200).json({ message: 'User logged in', token });
+});
+
+router.put('/', authMiddleware, async (req, res) => {
+	const validateUpdate = updateBodySchema.safeParse(req.body);
+
+	if (validateUpdate.error) {
+		res.status(411).json({ message: 'Error while updating the user' });
+	}
+
+	try {
+		await User.updateOne({ _id: req.userId }, req.body);
+		res.status(200).json({ message: 'User updated successfully.' });
+	} catch (error) {
+		res.status(500).json({ message: 'Error while updating the user' });
+	}
 });
 
 export default router;
