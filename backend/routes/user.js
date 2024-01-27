@@ -96,4 +96,28 @@ router.put('/', authMiddleware, async (req, res) => {
 	}
 });
 
+router.get('/bulk', async (req, res) => {
+	const { filter } = req.query;
+
+	try {
+		const users = await User.find({
+			$or: [
+				{ firstName: { $regex: filter, $options: 'i' } },
+				{ lastName: { $regex: filter, $options: 'i' } },
+			],
+		});
+
+		const listOfusers = users.map((user) => {
+			email: user.email;
+			firstName: user.firstName;
+			lastName: user.lastName;
+			_id: user._id;
+		});
+
+		res.status(200).json(listOfusers);
+	} catch (error) {
+		res.status(500).json({ message: 'Error while querying users' });
+	}
+});
+
 export default router;
