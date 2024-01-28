@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const mongoURL =
-	'mongodb+srv://saadahmad728:9ckeZFScOMELsYCh@paytm-cluster.ncgc4qa.mongodb.net/';
+	'mongodb+srv://saadahmad728:9ckeZFScOMELsYCh@paytm-cluster.ncgc4qa.mongodb.net/paytm';
 
 //mongoose.connect(process.env.MONGO_URI, {
 mongoose

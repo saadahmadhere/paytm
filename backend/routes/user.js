@@ -26,7 +26,7 @@ const updateBodySchema = z.object({
 
 const router = express.Router();
 
-router.post('/signup', (req, res) => {
+router.post('/signup', async (req, res) => {
 	const { email, firstName, lastName, password } = req.body;
 
 	const isSignedUp = signUpSchema.safeParse({
@@ -37,16 +37,14 @@ router.post('/signup', (req, res) => {
 	});
 
 	if (isSignedUp.error) {
-		res.status(411).json(isSignedUp.error);
-		return;
+		return res.status(411).json(isSignedUp.error);
 	}
 
-	User.findOne({ email }).then((user) => {
-		if (user) {
-			res.status(411).json({ message: 'User already exists' });
-			return;
-		}
-	});
+	const existingUser = await User.findOne({ email });
+
+	if (existingUser) {
+		return res.status(411).json({ message: 'User already exists' });
+	}
 
 	const newUser = new User({ email, firstName, lastName, password });
 
