@@ -107,12 +107,12 @@ router.get('/bulk', async (req, res) => {
 			],
 		});
 
-		const listOfusers = users.map((user) => {
-			email: user.email;
-			firstName: user.firstName;
-			lastName: user.lastName;
-			_id: user._id;
-		});
+		const listOfusers = users.map((user) => ({
+			email: user.email,
+			firstName: user.firstName,
+			lastName: user.lastName,
+			_id: user._id,
+		}));
 
 		res.status(200).json(listOfusers);
 	} catch (error) {
