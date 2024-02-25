@@ -2,9 +2,10 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 
 import { JWT_SECRET } from '../config.js';
-import { User } from '../db.js';
+
 import { z } from 'zod';
 import { authMiddleware } from '../middleware.js';
+import { User } from '../models/userModel.js';
 
 const signUpSchema = z.object({
 	email: z.string().email(),
