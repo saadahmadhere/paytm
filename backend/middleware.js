@@ -4,7 +4,7 @@ import { JWT_SECRET } from './config.js';
 export const authMiddleware = (req, res, next) => {
 	const { authorization } = req.headers;
 
-	if (!authorization || !authHeader.startsWith('Bearer ')) {
+	if (!authorization || !authorization.startsWith('Bearer ')) {
 		res.status(403).json({ message: 'Please login' });
 		return;
 	}
