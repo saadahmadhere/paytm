@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-export const accoutSchema = new mongoose.Schema({
+export const accountSchema = new mongoose.Schema({
 	userId: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User',
@@ -12,4 +12,4 @@ export const accoutSchema = new mongoose.Schema({
 	},
 });
 
-export const Account = mongoose.model('Account', accoutSchema);
+export const Account = mongoose.model('Account', accountSchema);
