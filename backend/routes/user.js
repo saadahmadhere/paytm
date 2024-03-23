@@ -6,6 +6,7 @@ import { JWT_SECRET } from '../config.js';
 import { z } from 'zod';
 import { authMiddleware } from '../middleware.js';
 import { User } from '../models/userModel.js';
+import { Account } from '../models/accountModel.js';
 
 const signUpSchema = z.object({
 	email: z.string().email(),
@@ -48,6 +49,15 @@ router.post('/signup', async (req, res) => {
 	}
 
 	const newUser = new User({ email, firstName, lastName, password });
+
+	/// ----- Create new account and assign a random balance between 1 and 10000------
+
+	await Account.create({
+		userId: newUser._id,
+		balance: 1 + Math.random() * 10000,
+	});
+
+	/// -----  ------
 
 	const token = jwt.sign({ userId: newUser._id }, JWT_SECRET);
 
