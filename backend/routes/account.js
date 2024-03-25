@@ -1,4 +1,6 @@
 import express from 'express';
+import mongoose from 'mongoose';
+
 import { authMiddleware } from '../middleware.js';
 import { Account } from '../models/accountModel.js';
 
@@ -26,6 +28,13 @@ router.post('/transfer', authMiddleware, async (req, res) => {
 			await session.abortTransaction();
 			return res.status(400).json({
 				message: 'Insufficient balance',
+			});
+		}
+
+		if (account.userId.toString() === req.userId) {
+			await session.abortTransaction();
+			return res.status(400).json({
+				message: "Can't send to self.",
 			});
 		}
 
